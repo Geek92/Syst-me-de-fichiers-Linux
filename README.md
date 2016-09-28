@@ -7,6 +7,8 @@ It builds a simple bootable .iso file using grub and running your main.c file.
 ## files description
  
 Here is the initial file structure of the project : 
+
+```
 	.
 	├── boot		The directory structure used by grub-mkrescue to build a bootable .iso
 	│   └── grub		
@@ -21,6 +23,7 @@ Here is the initial file structure of the project :
 	└── src			The directory used to store the assembly and C sources
 	    ├── 0boot.s		The actual entrypoint called by multiboot
 	    └── main.c		The main.c file where the main() is implemented. 
+```
 
 ## get started
 
