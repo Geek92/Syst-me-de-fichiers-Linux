@@ -1,0 +1,80 @@
+
+void clear_screen();				/* clear screen */
+void putc(char aChar);				/* print a single char on screen */
+void puts(char *aString);			/* print a string on the screen */
+void puthex(int aNumber);			/* print an Hex number on screen */
+
+/* multiboot entry-point with datastructure as arg. */
+void main(unsigned int * mboot_info)
+{
+	/* clear the screen */
+	//clear_screen();
+
+	/* print something */
+	puts("Hello World!\n");
+	puts("MBI at ");
+	puthex((unsigned int)mboot_info);
+	puts("\n");
+	for(;;);
+}
+
+/* base address for the video output assume to be set as character oriented by the multiboot */
+unsigned char *video_memory = (unsigned char *) 0xB8000;
+
+/* clear screen */
+void clear_screen() {
+  int i;
+  for(i=0;i<80*25;i++) { 			/* for each one of the 80 char by 25 lines */
+    video_memory[i*2+1]=0x0F;			/* color is set to black background and white char */
+    video_memory[i*2]=(unsigned char)' '; 	/* character shown is the space char */
+  }
+}
+
+/* print a string on the screen */
+void puts(char *aString) {
+  char *current_char=aString;
+  while(*current_char!=0) {
+    putc(*current_char++);
+  }
+}
+
+/* print an number in hexa */
+char *hex_digit="0123456789ABCDEF";
+void puthex(int aNumber) {
+  if(aNumber==0) putc('0');
+  else {
+    unsigned int tmp=*((unsigned int *)&aNumber);
+    while(tmp!=0) {
+      putc(hex_digit[tmp&0xF]);
+      tmp=(tmp>>4);
+    }
+  }
+}
+
+/* print a char on the screen */
+int cursor_x=0;					/* here is the cursor position on X [0..79] */
+int cursor_y=0;					/* here is the cursor position on Y [0..24] */
+
+void putc(char aChar) {
+  switch(aChar) {				/* deal with a special char */
+    case '\r': cursor_x=0; break;		/* carriage return */
+    case '\n': cursor_x=0; cursor_y++; break; 	/* new ligne */	
+    case 0x8 : if(cursor_x>0) cursor_x--; break;/* backspace */
+    case 0x9 : cursor_x=(cursor_x+8)&~7; break;	/* tabulation */
+						/* or print a simple character */
+    default  : 
+      video_memory[(cursor_x+80*cursor_y)*2]=aChar;
+      cursor_x++;
+      if(cursor_x>79) {
+        cursor_x=0;
+        cursor_y++;
+        if(cursor_y>24) {
+          clear_screen();
+          cursor_x=0;
+          cursor_y=0;
+        }
+      } 
+      break;
+  }
+}
+
