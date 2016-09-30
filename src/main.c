@@ -1,3 +1,4 @@
+#include "ioport.h"
 
 void clear_screen();				/* clear screen */
 void putc(char aChar);				/* print a single char on screen */
@@ -8,14 +9,14 @@ void puthex(int aNumber);			/* print an Hex number on screen */
 void main(unsigned int * mboot_info)
 {
 	/* clear the screen */
-	//clear_screen();
+	clear_screen();
 
 	/* print something */
 	puts("Hello World!\n");
 	puts("MBI at ");
 	puthex((unsigned int)mboot_info);
 	puts("\n");
-	for(;;);
+	for(;;) ;
 }
 
 /* base address for the video output assume to be set as character oriented by the multiboot */
@@ -55,26 +56,35 @@ void puthex(int aNumber) {
 int cursor_x=0;					/* here is the cursor position on X [0..79] */
 int cursor_y=0;					/* here is the cursor position on Y [0..24] */
 
-void putc(char aChar) {
-  switch(aChar) {				/* deal with a special char */
+void setCursor() {
+  int cursor_offset = cursor_x+cursor_y*80;
+  _outb(0x3d4,14);
+  _outb(0x3d5,((cursor_offset>>8)&0xFF));
+  _outb(0x3d4,15);
+  _outb(0x3d5,(cursor_offset&0xFF));
+}
+
+void putc(char c) {
+  if(cursor_x>79) {
+    cursor_x=0;
+    cursor_y++;
+  }
+  if(cursor_y>24) {
+    cursor_y=0;
+    clear_screen();
+  }
+  switch(c) {					/* deal with a special char */
     case '\r': cursor_x=0; break;		/* carriage return */
     case '\n': cursor_x=0; cursor_y++; break; 	/* new ligne */	
     case 0x8 : if(cursor_x>0) cursor_x--; break;/* backspace */
     case 0x9 : cursor_x=(cursor_x+8)&~7; break;	/* tabulation */
 						/* or print a simple character */
     default  : 
-      video_memory[(cursor_x+80*cursor_y)*2]=aChar;
+      video_memory[(cursor_x+80*cursor_y)*2]=c;
       cursor_x++;
-      if(cursor_x>79) {
-        cursor_x=0;
-        cursor_y++;
-        if(cursor_y>24) {
-          clear_screen();
-          cursor_x=0;
-          cursor_y=0;
-        }
-      } 
       break;
   }
+  setCursor();
 }
+
 
