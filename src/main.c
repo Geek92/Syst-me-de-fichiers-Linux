@@ -1,4 +1,5 @@
 #include "ioport.h"
+#include "gdt.h"
 
 void clear_screen();				/* clear screen */
 void putc(char aChar);				/* print a single char on screen */
@@ -10,6 +11,10 @@ void main(unsigned int * mboot_info)
 {
 	/* clear the screen */
 	clear_screen();
+    
+    puts("-> Setting up the GDT... ");
+    setup_gdt();
+    puts("OK\n");
 
 	/* print something */
 	puts("Hello World!\n");
