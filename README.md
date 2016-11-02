@@ -15,24 +15,35 @@ Here is the initial file structure of the project :
 	│       ├── grub.cfg	The grub configuration file
 	│       └── unicode.pf2	The unicode font used by grub
 	├── CONTRIBUTORS.md	The contributors list of this skeleton
-	├── include		The directory used to store .h file (empty in the skeleton)
+	├── include		The directory used to store .h file (contains IO port, GDT and IDT headers)
 	├── LICENSE		The GNU General Public Licence used by this project
 	├── link.ld		The link script used by gcc to build the project
 	├── Makefile		The makefile building mykernel.iso from the source 
 	├── README.md		This file (using markdown)
 	└── src			The directory used to store the assembly and C sources
 	    ├── 0boot.s		The actual entrypoint called by multiboot
-	    └── main.c		The main.c file where the main() is implemented. 
+	    ├── gdt0.s		Global Descriptor Table assembly routines
+	    ├── idt0.s		Interrupt Descriptor Table assembly routines
+	    ├── idt.c		Interrupt Descriptor Table configuration and interface
+        ├── gdt.c		Global Descriptor Table configuration and interface
+	    └── main.c		The main.c file where the main() is implemented.
 ```
 
 ## get started
 
-The source of your kernel is splitted in two files : 
+The source of your kernel is splitted in six files : 
 1. 0boot.s 
 2. main.c
+3. gdt0.s
+4. gdt.c
+5. idt0.s
+6. idt.c
 
 0boot.s is the real entry point of your kernel. It just stops hardware interrupt, sets a call-stack and
 jumps to the C main with the multiboot structure address as argument of main.
+
+IDT and GDT-related files should be working out of the box, and configure the CPU on boot. You can play
+with the IDT configuration to handle various interrupts (an example is given in main()).
 
 main.c is the C code that will run : your kernel ! You can change it in order to print "Hello My World".
 
