@@ -1,26 +1,42 @@
 #include "ioport.h"
 #include "gdt.h"
+#include "idt.h"
 
 void clear_screen();				/* clear screen */
 void putc(char aChar);				/* print a single char on screen */
 void puts(char *aString);			/* print a string on the screen */
 void puthex(int aNumber);			/* print an Hex number on screen */
 
+void timer_int(int_regs_t *r)
+{
+    puts(".");
+}
+
 /* multiboot entry-point with datastructure as arg. */
 void main(unsigned int * mboot_info)
 {
 	/* clear the screen */
 	clear_screen();
-    
-    puts("-> Setting up the GDT... ");
+    puts("Early boot.\n"); 
+    puts("\t-> Setting up the GDT... ");
     setup_gdt();
     puts("OK\n");
 
-	/* print something */
-	puts("Hello World!\n");
-	puts("MBI at ");
+    puts("\t-> Setting up the IDT... ");
+    setup_idt();
+    puts("OK\n");
+	
+    puts("\n\n");
+    
+    idt_setup_handler(0, timer_int);
+    __asm volatile("sti");
+
+    /* print something */
+	puts("Hello World!\n\n");
+	puts("Multiboot Info at ");
 	puthex((unsigned int)mboot_info);
 	puts("\n");
+
 	for(;;) ;
 }
 
