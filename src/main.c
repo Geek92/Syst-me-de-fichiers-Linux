@@ -19,7 +19,7 @@ void main(unsigned int * mboot_info)
 	clear_screen();
     puts("Early boot.\n"); 
     puts("\t-> Setting up the GDT... ");
-    setup_gdt();
+    gdt_init_default();
     puts("OK\n");
 
     puts("\t-> Setting up the IDT... ");
