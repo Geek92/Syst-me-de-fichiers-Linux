@@ -33,10 +33,9 @@ Here is the initial file structure of the project :
 
 ## get started
 
-The source of your kernel is splitted in six files : 
+The source of your kernel is splitted in five files : 
 1. 0boot.s 
 2. main.c
-3. gdt0.s
 4. gdt.c
 5. idt0.s
 6. idt.c
