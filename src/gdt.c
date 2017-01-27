@@ -47,7 +47,7 @@ void gdt_activate(struct gdt_entry_s *gdt_base, uint16_t gdt_limit, uint16_t cs,
 }
 
 /**
- * gdt_set_codesegment_entry is used to setup an entry of the gdt. 
+ * gdt_set_codesegment_entry is used to set up an entry of the gdt used as a codesegment. 
  *  - entry : the entry address ;
  *  - base  : the base address for the segment ;
  *  - limit : the size of the segment ;
@@ -82,7 +82,7 @@ void gdt_set_codesegment_entry(struct gdt_entry_s *entry, uint32_t base, uint32_
 }
 
 /**
- * gdt_set_datasegment_entry is used to setup an entry of the gdt. 
+ * gdt_set_datasegment_entry is used to set up an entry of the gdt used as datasegment. 
  *  - entry : the entry address ;
  *  - base  : the base address for the segment ;
  *  - limit : the size of the segment ;
@@ -115,7 +115,7 @@ void gdt_set_datasegment_entry(struct gdt_entry_s *entry, uint32_t base, uint32_
 }
 
 /**
- * gdt_set_null_entry is used to setup an entry of the gdt. 
+ * gdt_set_null_entry is used to set up an entry of the gdt unused (nul). 
  *  - entry : the entry address ;
  */
 void gdt_set_null_entry(struct gdt_entry_s *entry) {
