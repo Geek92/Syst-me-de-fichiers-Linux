@@ -4,7 +4,7 @@
 /* read a byte from the ioport 'port' */
 static inline unsigned char _inb(unsigned short port) {
   int ret; 
-  asm("inb %0,%1": "=a" (ret) : "Nd" (port) :);
+  asm("inb %1,%0": "=a" (ret) : "Nd" (port) :);
   /***
    * N.B. in inb %0,%1 :  
    *   %0 must be the register al => "=a" 
