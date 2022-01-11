@@ -13,8 +13,20 @@
 /* Use this to define a software interrupt triggerable by anyone into the IDT */
 #define USER_IDT(X) { extern void isr ## X(); idt_setup_descriptor (X, (uint32_t) isr ## X, 0x08, 0xEE); }
 
+
 struct idt_entry_struct idt_entries[MAX_IDT_ENTRIES];
-struct idt_ptr_struct idt_ptr;
+
+/**
+ * struct idt_register is the 48 bits data structure of the intel Gobal Descriptor Table register.
+ */
+struct idt_register {
+    uint16_t limit :16; /* 16 bits for the size of the Interrupt Descriptor Table (-1) */
+    uint32_t base : 32; /* 32 bits for the address of the Interrupt Descriptor Table */
+} __attribute__((packed)); /* this gcc directive avoid fields padding, base will not be aligned */
+
+void _lidt(struct idt_register *idt_register) {
+    asm("lidt (%0)" :: "r"(idt_register) :);
+}
 
 void *irq_handlers[16] = 
 {
@@ -122,26 +134,36 @@ void setup_softint()
 
 void setup_idt()
 {
-	idt_ptr.limit = sizeof(struct idt_entry_struct) * MAX_IDT_ENTRIES - 1;
-	idt_ptr.base = (uint32_t)&idt_entries;
+    struct idt_register idt_reg;
+	idt_reg.limit = sizeof(struct idt_entry_struct) * MAX_IDT_ENTRIES - 1;
+	idt_reg.base = (uint32_t)&idt_entries;
 
-	zero_idt(idt_entries);
 	setup_irq();
 	setup_softint();
-	reload_idt(&idt_ptr);
+	_lidt(&idt_reg);
+}
+
+int_regs_t* last_regs = 0;
+
+void end_of_interrupt()
+{
+    if (last_regs->int_no >= 40) {
+        _outb(0xA0, 0x20);
+    }
+	_outb(0x20, 0x20);
 }
 
 void irq_handler(int_regs_t* r)
 {
 	void (*handler)(int_regs_t* r);
-	handler = irq_handlers[r->int_no - 32];
+
+    last_regs = r;
+
+    handler = irq_handlers[r->int_no - 32];
 	if(handler)
 		handler(r);
 
-	if(r->int_no >= 40){
-		_outb(0xA0, 0x20);
-    }
-	_outb(0x20, 0x20);
+    end_of_interrupt();
 }
 
 char *int_mesg[] = {

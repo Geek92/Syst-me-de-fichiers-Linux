@@ -39,11 +39,11 @@ void gdt_activate(struct gdt_entry_s *gdt_base, uint16_t gdt_limit, uint16_t cs,
 	asm( "movw %0,%%gs" : :"r" (gs) :);
 	asm( "movw %0,%%ss" : :"r" (ss) :);
 	/* set the code segment register (cs) using a fake retf */ 
-	asm( 	"pushl %0     ;"
-		"push $cs_set ;"
-		"retf         ;" /* far jump to cs_set with %0 as cs */
-		"cs_set:      ;"
-		::"r" (cs):);
+	asm( 	"pushl %0     \n"
+		"push $cs_set \n"
+		"retf         \n" /* far jump to cs_set with %0 as cs */
+		"cs_set:      \n"
+		::"r" ((uint32_t)cs):);
 }
 
 /**

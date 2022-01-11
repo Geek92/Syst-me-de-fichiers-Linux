@@ -44,7 +44,7 @@ The source of your kernel is splitted in five files :
 jumps to the C main with the multiboot structure address as argument of main.
 
 IDT and GDT-related files should be working out of the box, and configure the CPU on boot. You can play
-with the IDT configuration to handle various interrupts (an example is given in main()).
+with the IDT configuration to handle various interrupts.
 
 main.c is the C code that will run : your kernel ! You can change it in order to print "Hello My World".
 

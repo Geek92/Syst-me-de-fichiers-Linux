@@ -3,7 +3,7 @@
 
 /* read a byte from the ioport 'port' */
 static inline unsigned char _inb(unsigned short port) {
-  int ret; 
+  unsigned char ret;
   asm("inb %1,%0": "=a" (ret) : "Nd" (port) :);
   /***
    * N.B. in inb %0,%1 :  

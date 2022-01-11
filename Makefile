@@ -1,5 +1,5 @@
 IMAGE=mykernel.iso
-BINFILE=mykernel.bin
+BINFILE=iso/boot/mykernel.bin
 SRC_DIR=src
 INC_DIR=include
 
@@ -25,17 +25,18 @@ ASFLAGS=-felf
 # Include directories
 CFLAGS+=-I$(INC_DIR)
 
-.PHONY: $(IMAGE) run
-
 all: $(IMAGE)
 	@echo "Done !"
 
 $(IMAGE): $(BINFILE)
-	cp $(BINFILE) boot/mykernel.bin
-	grub-mkrescue -d /usr/lib/grub/i386-pc/ -o $(IMAGE) ./
+	grub-mkrescue -d /usr/lib/grub/i386-pc/ -o $(IMAGE) iso
 
 run:
-	qemu-system-x86_64 -boot d -m 2048 -cdrom mykernel.iso -serial stdio
+	qemu-system-x86_64 -boot d -m 2048 -cdrom mykernel.iso
+
+run_curses:
+	qemu-system-x86_64 -boot d -m 2048 -cdrom mykernel.iso -curses
+
 
 $(BINFILE): $(AOBJ) $(COBJ)
 	$(LD) $(LDFLAGS) -Tlink.ld $^ -o $@
@@ -47,4 +48,6 @@ $(BINFILE): $(AOBJ) $(COBJ)
 	$(AS) $(ASFLAGS) $< -o $@
 
 clean:
-	rm -f $(COBJ) $(AOBJ) $(BINFILE) boot/$(BINFILE) $(IMAGE)
+	rm -f $(COBJ) $(AOBJ) $(BINFILE) $(IMAGE)
+
+.PHONY: run run_curses

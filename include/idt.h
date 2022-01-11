@@ -45,7 +45,10 @@ typedef const struct int_regs
 void setup_idt();
 void idt_setup_descriptor(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
 void idt_setup_handler(int irq, void (*handler)(int_regs_t *r));
-extern void reload_idt(struct idt_ptr_struct *idtptr);
 extern void zero_idt(struct idt_entry_struct *entries);
+void end_of_interrupt();
+
+#define irq_enable() asm("sti")
+#define irq_disable() asm("cli")
 
 #endif
