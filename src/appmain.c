@@ -1,19 +1,35 @@
 #include "minilib.h"
 
-void app_main()
+
+int app_main(int a, int b)
 {
+  int esp_value,ebp_value;
+  //j'affiche les valeurs des registres esp et ebp
+  asm ("mov %%esp, %0" "\n\t"
+      "mov %%ebp, %1"
+      :"=r"(esp_value),
+       "=r"(ebp_value));
+       putud(esp_value);
+       puts("\n");
+       putud(ebp_value);
+       puts("\n");
 
+      return a + b;
+}
 
-  int x, y;
+int multiplication(int a, int b){
 
-  // je copie les valeurs des registres esp et ebp dans x et y
-  asm ("mov %%esp, %1" "\n\t"
-      "mov %%ebp, %0"
-      :"=r"(x),
-       "=r"(y));
-    //j'affiche les valeurs des registres;
-    puthex(x);
-    puts("\n");
-    puthex(y);
-    puts("\n");
+  int esp_value,ebp_value;
+  //j'affiche les valeurs des registres esp et ebp
+  asm ("mov %%esp, %0" "\n\t"
+      "mov %%ebp, %1"
+      :"=r"(esp_value),
+       "=r"(ebp_value));
+       putud(esp_value);
+       puts("\n");
+       putud(ebp_value);
+       puts("\n");
+
+      return a * b;
+
 }
