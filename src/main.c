@@ -2,8 +2,8 @@
 #include "idt.h"
 #include "minilib.h"
 
-extern int app_main(int a, int b);
-extern int multiplication(int a,int b);
+extern void app_main();
+
 void empty_irq(int_regs_t *r) {
 }
 
@@ -34,11 +34,7 @@ void main(unsigned int * mboot_info)
     __asm volatile("sti");
 
     /* minimal setup done ! */
-    //on effectue les appels imbriques puis les appels successifs de fonctions
-    int value_1 = 2;
-    int value_2 = 5;
-    int result1 = app_main(value_1, value_2);
-    int result2 = multiplication(value_1, value_2);
+     app_main();
     puts("Going idle\n");
     for(;;) ; /* nothing more to do... really nothing ! */
 }
