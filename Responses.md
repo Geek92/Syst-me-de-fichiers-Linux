@@ -18,13 +18,13 @@ int esp_value,ebp_value;
 
 3.2.2
 
-   la valeur du registre esp est inferieure a celles des variables locales 
-   declarées dans les fonctions par contre, les valeurs des variables locales sont inferieures a la valeur 
+   la valeur du registre esp est inferieure a celles des variables locales
+   declarées dans les fonctions par contre, les valeurs des variables locales sont inferieures a la valeur
    du registre ebp.
 
 3.2.3
 
-les valeurs des parametres des fonctions sont inferieures a celles du registre ebp et superieures 
+les valeurs des parametres des fonctions sont inferieures a celles du registre ebp et superieures
 a celles du registre esp.
 
 3.2.4
@@ -33,4 +33,4 @@ ces differentes valeurs indiquent le fonctionement de la pile d'execution: losrq
 les arguments sont empilés et ensuite les variables locales. le registre ebp pointe a la base de la pile tandis que
 le registre esp pointe au sommet de la pile.
 
-   
+Exercice 3.3 try/throw

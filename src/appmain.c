@@ -1,7 +1,10 @@
 #include "minilib.h"
 
 typedef int(func_t)(int);
+typedef void(func_ctx)(void*);
+#define STACK_SIZE 4096
 
+//macro qui permets d'afficher les valeurs des registres esp et ebp de la fonction courante
 #define DUMP_SP() do{  \
   int esp_value;      \
   int ebp_value;      \
@@ -15,9 +18,15 @@ typedef int(func_t)(int);
        puts("\n");                            \
 }while(0)
 
+enum state {NEW_CONTEXT, ACTIVE, TERMINATED};
+
 struct pctx {
   int esp_value;
   int ebp_value;
+  func_ctx *function_pointer;
+  void *arg_pointer;
+  enum state context_state;
+  char stack[STACK_SIZE];
 };
 
 struct pctx save_context;
@@ -48,8 +57,19 @@ int try(func_t *f, int arg){
   return f(arg);
 }
 
+//procedure qui permets d'initialiser un context
+int init_ctx(struct pctx *ctx, func_ctx f, void *args){
+  ctx->function_pointer = f;
+  ctx->arg_pointer = args;
+    return 0;
+}
+
+//procedure qui effectue le changement de contexte
+ void switch_to_ctx(struct pctx *ctx){
+
+
+ }
 void app_main(){
- //puts("hello\n");
   //j'appeles ma fonction try
   int v = try(&my_function,5);
   putud(v);
