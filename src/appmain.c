@@ -31,27 +31,27 @@ int saved_r;
 
 //on definit la fonction throw
 int throw(int r){
-  saved_r = r;
-  asm("movl %0, %%esp" "\n\t" "movl %1, %%ebp"
-       :
-       : "r"(save_context.esp_value),"r"(save_context.ebp_value));
-  return saved_r;
+    saved_r = r;
+    asm("movl %0, %%esp" "\n\t" "movl %1, %%ebp"
+        :
+        : "r"(save_context.esp_value),"r"(save_context.ebp_value));
+        return saved_r;
 }
 
 //on definit la function
 int my_function(int return_value){
-  if(return_value < 0){
-    throw(return_value);
-  }
-  return return_value;
+    if(return_value < 0){
+        throw(return_value);
+    }
+    return return_value;
 }
 
 // on definit la function try
 int try(func_t *f, int arg){
-  DUMP_SP();
-  asm ("mov %%esp, %0" "\n\t" "mov %%ebp, %1"
-    :"=r"(save_context.esp_value),"=r"(save_context.ebp_value));
-  return f(arg);
+      DUMP_SP();
+      asm ("mov %%esp, %0" "\n\t" "mov %%ebp, %1"
+      :"=r"(save_context.esp_value),"=r"(save_context.ebp_value));
+      return f(arg);
 }
 
 //procedure qui permets d'initialiser un contexte
@@ -60,9 +60,6 @@ int init_ctx(struct pctx *ctx, func_ctx f, void *args){
       ctx->arg_pointer = args;
       return 0;
 }
-
-//fonction f_ping
-
 
 //procedure qui effectue le changement de contexte
  void switch_to_ctx(struct pctx *ctx){
@@ -78,6 +75,29 @@ int init_ctx(struct pctx *ctx, func_ctx f, void *args){
               }
     }
  }
+
+ //fonction f_ping
+ void f_ping(void *args)
+   {
+       while(1) {
+           putc('A') ;
+           switch_to_ctx(&ctx_pong);
+           putc('B') ;
+           switch_to_ctx(&ctx_pong);
+           putc('C') ;
+           switch_to_ctx(&ctx_pong);
+ } }
+
+ //fonction f_pong
+ void f_pong(void *args)
+    {
+        while(1) {
+            putc('1') ;
+            switch_to_ctx(&ctx_ping);
+            putc('2') ;
+            switch_to_ctx(&ctx_ping);
+ } }
+
 void app_main(){
   //j'appeles ma fonction try
   /*int v = try(&my_function,5);
