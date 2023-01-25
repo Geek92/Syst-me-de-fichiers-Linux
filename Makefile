@@ -4,9 +4,9 @@ SRC_DIR=src
 INC_DIR=include
 
 # Toolchain
-CC=$(addprefix i386-elf-,gcc) #x86_64-pc-linux-gnu-gcc
+CC=gcc #x86_64-pc-linux-gnu-gcc
 AS=nasm
-LD=$(addprefix i386-elf-,ld)  #x86_64-elf-ld
+LD=ld  #x86_64-elf-ld
 
 # Sources
 CSOURCES=$(wildcard $(SRC_DIR)/*.c)
@@ -18,7 +18,7 @@ COBJ=$(CSOURCES:.c=.o)
 AOBJ=$(ASOURCES:.s=.o)
 
 # Toolchain flags
-CFLAGS=-m32 -Wall -Werror -nostdlib -fno-builtin -fno-stack-protector -std=gnu99 -ffreestanding -c -g -Wno-unused-variable -fPIC
+CFLAGS=-m32 -Wall -Werror -nostdlib -fno-builtin -fno-stack-protector -std=gnu99 -ffreestanding -c -g -Wno-unused-variable -fPIC 
 LDFLAGS=-melf_i386 -z max-page-size=0x1000
 ASFLAGS=-felf
 
@@ -29,7 +29,7 @@ all: $(IMAGE)
 	@echo "Done !"
 
 $(IMAGE): $(BINFILE)
-	grub-mkrescue -d /usr/local/lib/grub/i386-pc -o $(IMAGE) iso
+	grub-mkrescue -d /usr/lib/grub/i386-pc/ -o $(IMAGE) iso
 
 run:
 	qemu-system-x86_64 -boot d -m 2048 -cdrom mykernel.iso

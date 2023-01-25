@@ -58,21 +58,22 @@ int try(func_t *f, int arg){
 int init_ctx(struct pctx *ctx, func_ctx f, void *args){
       ctx->function_pointer = f;
       ctx->arg_pointer = args;
+      ctx->context_state = NEW_CONTEXT;
+      ctx->ebp_value = (int)ctx->stack[STACK_SIZE - 4];
+      ctx->esp_value = (int)&ctx->stack[STACK_SIZE - 4];
       return 0;
 }
 
 //procedure qui effectue le changement de contexte
  void switch_to_ctx(struct pctx *ctx){
-    if(current_context == NULL){
-
-    } else {
-              SAVE_CONTEXT(current_context);
-              current_context = ctx;
-              LOAD_CONTEXT(current_context);
-              if(current_context->context_state == NEW_CONTEXT){
-                    current_context->context_state = ACTIVE;
-                    current_context->function_pointer(current_context->arg_pointer);
-              }
+    if(current_context != NULL){
+        SAVE_CONTEXT(current_context);
+    }
+    current_context = ctx;
+    LOAD_CONTEXT(current_context);
+    if(current_context->context_state == NEW_CONTEXT){
+        current_context->context_state = ACTIVE;
+        current_context->function_pointer(current_context->arg_pointer);
     }
  }
 
