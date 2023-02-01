@@ -15,7 +15,7 @@
 #define LIST_POISON1  ((void *) 0x100)
 #define LIST_POISON2  ((void *) 0x122)
 
-#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+#define offsetof(TYPE, MEMBER) __builtin_offsetof (TYPE, MEMBER)
 
 /**
  * container_of - cast a member of a structure out to the containing structure
@@ -24,9 +24,9 @@
  * @member:	the name of the member within the struct.
  *
  */
-#define container_of(ptr, type, member) ({				\
-	void *__mptr = (void *)(ptr);					\
-	((type *)(__mptr - offsetof(type, member))); })
+#define container_of(ptr, type, member) ({          \
+            void *__mptr = (void *)(ptr);           \
+            ((type *)(__mptr - offsetof(type, member))); })
 
 
 /* ----------------------------------------------------------------- */
@@ -37,7 +37,7 @@ struct list_head {
 
 #define LIST_HEAD_INIT(name) { &(name), &(name) }
 
-#define LIST_HEAD(name) \
+#define LIST_HEAD(name)                             \
 	struct list_head name = LIST_HEAD_INIT(name)
 
 /**
@@ -168,7 +168,7 @@ static inline int list_is_singular(const struct list_head *head)
  * @type:	the type of the struct this is embedded in.
  * @member:	the name of the list_head within the struct.
  */
-#define list_entry(ptr, type, member) \
+#define list_entry(ptr, type, member)           \
 	container_of(ptr, type, member)
 
 /**
@@ -179,7 +179,7 @@ static inline int list_is_singular(const struct list_head *head)
  *
  * Note, that list is expected to be not empty.
  */
-#define list_first_entry(ptr, type, member) \
+#define list_first_entry(ptr, type, member)     \
 	list_entry((ptr)->next, type, member)
 
 
@@ -191,7 +191,7 @@ static inline int list_is_singular(const struct list_head *head)
  *
  * Note, that list is expected to be not empty.
  */
-#define list_last_entry(ptr, type, member) \
+#define list_last_entry(ptr, type, member)      \
 	list_entry((ptr)->prev, type, member)
 
 
@@ -203,18 +203,18 @@ static inline int list_is_singular(const struct list_head *head)
  *
  * Note that if the list is empty, it returns NULL.
  */
-#define list_first_entry_or_null(ptr, type, member) ({ \
-	struct list_head *head__ = (ptr); \
-	struct list_head *pos__ = READ_ONCE(head__->next); \
-	pos__ != head__ ? list_entry(pos__, type, member) : NULL; \
-})
+#define list_first_entry_or_null(ptr, type, member) ({                  \
+            struct list_head *head__ = (ptr);                           \
+            struct list_head *pos__ = head__->next;                     \
+            pos__ != head__ ? list_entry(pos__, type, member) : NULL;   \
+        })
 
 /**
  * list_next_entry - get the next element in list
  * @pos:	the type * to cursor
  * @member:	the name of the list_head within the struct.
  */
-#define list_next_entry(pos, member) \
+#define list_next_entry(pos, member)                        \
 	list_entry((pos)->member.next, typeof(*(pos)), member)
 
 
@@ -223,7 +223,7 @@ static inline int list_is_singular(const struct list_head *head)
  * @pos:	the type * to cursor
  * @member:	the name of the list_head within the struct.
  */
-#define list_prev_entry(pos, member) \
+#define list_prev_entry(pos, member)                        \
 	list_entry((pos)->member.prev, typeof(*(pos)), member)
 
 /**
@@ -231,7 +231,7 @@ static inline int list_is_singular(const struct list_head *head)
  * @pos:	the &struct list_head to use as a loop cursor.
  * @head:	the head for your list.
  */
-#define list_for_each(pos, head) \
+#define list_for_each(pos, head)                                \
 	for (pos = (head)->next; pos != (head); pos = pos->next)
 
 
@@ -240,7 +240,7 @@ static inline int list_is_singular(const struct list_head *head)
  * @pos:	the &struct list_head to use as a loop cursor.
  * @head:	the head for your list.
  */
-#define list_for_each_prev(pos, head) \
+#define list_for_each_prev(pos, head)                           \
 	for (pos = (head)->prev; pos != (head); pos = pos->prev)
 
 
@@ -250,7 +250,7 @@ static inline int list_is_singular(const struct list_head *head)
  * @head:	the head for your list.
  * @member:	the name of the list_head within the struct.
  */
-#define list_entry_is_head(pos, head, member)				\
+#define list_entry_is_head(pos, head, member)   \
 	(&pos->member == (head))
 
 /**
@@ -259,9 +259,9 @@ static inline int list_is_singular(const struct list_head *head)
  * @head:	the head for your list.
  * @member:	the name of the list_head within the struct.
  */
-#define list_for_each_entry(pos, head, member)				\
+#define list_for_each_entry(pos, head, member)                  \
 	for (pos = list_first_entry(head, typeof(*pos), member);	\
-	     !list_entry_is_head(pos, head, member);			\
+	     !list_entry_is_head(pos, head, member);                \
 	     pos = list_next_entry(pos, member))
 
 /**
@@ -272,7 +272,7 @@ static inline int list_is_singular(const struct list_head *head)
  */
 #define list_for_each_entry_reverse(pos, head, member)			\
 	for (pos = list_last_entry(head, typeof(*pos), member);		\
-	     !list_entry_is_head(pos, head, member); 			\
+	     !list_entry_is_head(pos, head, member);                \
 	     pos = list_prev_entry(pos, member))
 
 

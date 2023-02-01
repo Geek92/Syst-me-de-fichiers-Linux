@@ -1,19 +1,20 @@
 #include "appmain.h"
-#include "list.h"
 #include "minilib.h"
+#include "list.h"
 
 // on cree la structure qui va permettre de memoriser les contextes actifs
 struct pctx context_list[LIST_SIZE];
 
 // on declare une liste d'elements
-LIST_HEAD(contextList);
+LIST_HEAD(runqueue);
 
 // on declare le context courant
-struct pctx current_context;
+struct pctx *actual_context = NULL;
 
 
 //fonction qui permets d'initialiser le status des elments du tableau
-void initialize_context_list(struct pctx *context_list_pointer){
+void initialize_context_list(struct pctx *context_list_pointer)
+{
     for(int i = 0; i < LIST_SIZE; i++){
         (context_list_pointer + i)->context_state = UNUSED; 
     }
@@ -26,35 +27,43 @@ int create_ctx(func_ctx f, void *args){
       for(int i = 0; i < LIST_SIZE; i++){
           if(context_list[i].context_state == UNUSED)
               {
-                    struct pctx new_context;
-                    new_context.function_pointer = f;
-                    new_context.arg_pointer = args;
-                    new_context.context_state = NEW_CONTEXT;
-                    new_context.ebp_value = (int)new_context.stack[STACK_SIZE - 4];
-                    new_context.esp_value = (int)&new_context.stack[STACK_SIZE - 4];
-                    context_list[i] = new_context;
+                    //struct pctx new_context;
+                    context_list[i].function_pointer = f;
+                    context_list[i].arg_pointer = args;
+                    context_list[i].context_state = NEW_CONTEXT;
+                    context_list[i].ebp_value = (int)context_list[i].stack[STACK_SIZE - 4];
+                    context_list[i].esp_value = (int)&context_list[i].stack[STACK_SIZE - 4];
+                    
                      //on cree le chainage
-                    //new_context.position = LIST_HEAD_INIT(new_context.position);
-                    list_add(&new_context.position, &contextList);
-                    break;
+                    INIT_LIST_HEAD(&context_list[i].position);
+                    list_add(&context_list[i].position, &runqueue);
+                    return i;
               }
        }
-      return 0;
+      return -1;
 }
 
-void yield(){
-    //si on n'a pas de context courrant on parcours la liste des context et on charge le premier context
-    if(current_context == NULL){
-       for(int i = 0; i < LIST_SIZE; i++){
-            if(context_list[i].context_state == NEW_CONTEXT){
-                current_context = context_list[i];
-                break;
-            }
-       }
-
+//procedure qui effectue le changement de contexte
+ void switch_to_ctx(struct pctx *ctx){
+    if(actual_context != NULL){
+        SAVE_CONTEXT(actual_context);
     }
-    
+    actual_context = ctx;
+    LOAD_CONTEXT(actual_context);
+    if(actual_context->context_state == NEW_CONTEXT){
+        actual_context->context_state = ACTIVE;
+        actual_context->function_pointer(actual_context->arg_pointer);
+    }
+ }
 
+void yield(){
+    if(list_empty(&runqueue)) {
+        puts("liste vide\n");
+        return;
+    }
+    list_move_tail(runqueue.next,&runqueue);
+    struct pctx *n = list_entry(runqueue.next, struct pctx, position);
+    switch_to_ctx(n);
 }
 
 void f_ping(void *args)

@@ -48,7 +48,7 @@ int init_ctx(struct pctx *ctx, func_ctx f, void *args){
            putc('B') ;
            switch_to_ctx(&ctx_pong);
            putc('C') ;
-           switch_to_ctx(&ctx_pong);
+           switch_to_ctx(&ctx_pong);.
  } }
 
  //fonction f_pong

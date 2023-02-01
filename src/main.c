@@ -2,7 +2,8 @@
 #include "idt.h"
 #include "minilib.h"
 
-extern void app_main();
+//extern void app_main();
+extern void app_main2();
 
 void empty_irq(int_regs_t *r) {
 }
@@ -34,7 +35,8 @@ void main(unsigned int * mboot_info)
     __asm volatile("sti");
 
     /* minimal setup done ! */
-     app_main();
+    //app_main();
+      app_main2();
     puts("Going idle\n");
     for(;;) ; /* nothing more to do... really nothing ! */
 }
