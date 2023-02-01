@@ -52,6 +52,6 @@ struct pctx {
         void *arg_pointer;
         enum state context_state;
         char stack[STACK_SIZE];
-        struct list_head head_of_list;
+        struct list_head position;
 };
 
