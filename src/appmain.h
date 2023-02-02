@@ -14,7 +14,6 @@
 }while(0)
 
 //macro qui permets de charger un contexte
-//mov(source, destination)
 #define LOAD_CONTEXT(context){                                    \
   asm ("mov %0, %%esp" "\n\t" "mov %1,%%ebp"                              \
       :                                                                   \
@@ -31,15 +30,8 @@
 
 #define LIST_SIZE 10
 
-
-
-//declaration des fonctions et parametres
-
-typedef int(func_t)(int);
 typedef void(func_ctx)(void*);
-//struct pctx saved_context;
-
-//declaration des fonctions ping et pong a utiliser pour le changement de contexte
+typedef int(func_t)(int);
 void f_ping(void *arg);
 void f_pong(void *arg);
 enum state {NEW_CONTEXT, ACTIVE, TERMINATED, UNUSED};
@@ -54,4 +46,13 @@ struct pctx {
         char stack[STACK_SIZE];
         struct list_head position;
 };
+
+//declaration des fonctions ping et pong a utiliser pour le changement de contexte
+extern void switch_to_ctx(struct pctx *ptr);
+
+
+
+
+
+
 

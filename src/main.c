@@ -35,7 +35,9 @@ void main(unsigned int * mboot_info)
     __asm volatile("sti");
 
     /* minimal setup done ! */
-    //app_main();
+      //swtich to context
+      //app_main();
+      //yield
       app_main2();
     puts("Going idle\n");
     for(;;) ; /* nothing more to do... really nothing ! */

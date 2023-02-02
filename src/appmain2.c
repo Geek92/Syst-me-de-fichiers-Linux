@@ -12,17 +12,17 @@ LIST_HEAD(runqueue);
 struct pctx *actual_context = NULL;
 
 
-//fonction qui permets d'initialiser le status des elments du tableau
-void initialize_context_list(struct pctx *context_list_pointer)
+//fonction qui permets d'initialiser le status des elements du tableau
+void initialize_context_list()
 {
     for(int i = 0; i < LIST_SIZE; i++){
-        (context_list_pointer + i)->context_state = UNUSED; 
+        context_list[i].context_state = UNUSED; 
     }
 
 }
 
 
-//procedure qui permets de creer un context et de l'ajouter a la liste de context actifs
+//procedure qui p       ermets de creer un context et de l'ajouter a la liste de context actifs
 int create_ctx(func_ctx f, void *args){
       for(int i = 0; i < LIST_SIZE; i++){
           if(context_list[i].context_state == UNUSED)
@@ -43,19 +43,6 @@ int create_ctx(func_ctx f, void *args){
       return -1;
 }
 
-//procedure qui effectue le changement de contexte
- void switch_to_ctx(struct pctx *ctx){
-    if(actual_context != NULL){
-        SAVE_CONTEXT(actual_context);
-    }
-    actual_context = ctx;
-    LOAD_CONTEXT(actual_context);
-    if(actual_context->context_state == NEW_CONTEXT){
-        actual_context->context_state = ACTIVE;
-        actual_context->function_pointer(actual_context->arg_pointer);
-    }
- }
-
 void yield(){
     if(list_empty(&runqueue)) {
         puts("liste vide\n");
@@ -66,7 +53,7 @@ void yield(){
     switch_to_ctx(n);
 }
 
-void f_ping(void *args)
+void f_ping2(void *args)
    {
        while(1) {
            putc('A') ;
@@ -77,7 +64,7 @@ void f_ping(void *args)
            yield();
  } }
 
- void f_pong(void *args)
+ void f_pong2(void *args)
     {
         while(1) {
             putc('1') ;
@@ -88,8 +75,8 @@ void f_ping(void *args)
 
 void app_main2()
 {
-    initialize_context_list(context_list);
-    create_ctx(f_ping,NULL);
-    create_ctx(f_pong,NULL);
+    initialize_context_list();
+    create_ctx(f_ping2,NULL);
+    create_ctx(f_pong2,NULL);
     yield();
 }
