@@ -2,7 +2,7 @@
 #include "minilib.h"
 #include "list.h"
 
-// on cree la structure qui va permettre de memoriser les contextes actifs
+// on cree le tableau qui va permettre de memoriser les contextes actifs
 struct pctx context_list[LIST_SIZE];
 
 // on declare une liste d'elements
@@ -22,7 +22,7 @@ void initialize_context_list()
 }
 
 
-//procedure qui p       ermets de creer un context et de l'ajouter a la liste de context actifs
+//procedure qui permets de creer un context et de l'ajouter à la liste de context actifs
 int create_ctx(func_ctx f, void *args){
       for(int i = 0; i < LIST_SIZE; i++){
           if(context_list[i].context_state == UNUSED)
