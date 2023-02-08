@@ -1,7 +1,6 @@
 #include "minilib.h"
 #include "appmain.h"
 #include "list.h"
-#include "idt.h"
 
 //typedef int(func_t)(int);
 //typedef void(func_ctx)(void*);
@@ -29,7 +28,6 @@ int init_ctx(struct pctx *ctx, func_ctx f, void *args){
 
 //procedure qui effectue le changement de contexte
  void switch_to_ctx(struct pctx *ctx){
-    
     if(current_context != NULL){
         SAVE_CONTEXT(current_context);
     }
@@ -37,8 +35,6 @@ int init_ctx(struct pctx *ctx, func_ctx f, void *args){
     LOAD_CONTEXT(current_context);
     if(current_context->context_state == NEW_CONTEXT){
         current_context->context_state = ACTIVE;
-        end_of_interrupt();
-        irq_enable();
         current_context->function_pointer(current_context->arg_pointer);
     }
  }

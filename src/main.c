@@ -4,6 +4,7 @@
 
 //extern void app_main();
 extern void app_main2();
+extern void app_main3();
 
 void empty_irq(int_regs_t *r) {
 }
@@ -38,7 +39,9 @@ void main(unsigned int * mboot_info)
       //swtich to context
       //app_main();
       //yield
-      app_main2();
+      //app_main2();
+      //round_robbind
+      app_main3();
     puts("Going idle\n");
     for(;;) ; /* nothing more to do... really nothing ! */
 }

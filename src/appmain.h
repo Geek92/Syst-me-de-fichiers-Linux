@@ -30,10 +30,17 @@
 
 #define LIST_SIZE 10
 
+#define TIMER_IRQ 0
+
 typedef void(func_ctx)(void*);
 typedef int(func_t)(int);
 void f_ping(void *arg);
 void f_pong(void *arg);
+extern void f_ping2(void *arg);
+extern void f_pong2(void *arg);
+extern void initialize_context_list(void);
+extern void yield();
+extern int create_ctx(func_ctx f, void *args);
 enum state {NEW_CONTEXT, ACTIVE, TERMINATED, UNUSED};
 
 //defnition de la structure qui definit un contexte
@@ -46,9 +53,11 @@ struct pctx {
         char stack[STACK_SIZE];
         struct list_head position;
 };
-
+//struct pctx context_list[LIST_SIZE];
 //declaration des fonctions ping et pong a utiliser pour le changement de contexte
 extern void switch_to_ctx(struct pctx *ptr);
+
+//struct pctx context_list[LIST_SIZE];
 
 
 

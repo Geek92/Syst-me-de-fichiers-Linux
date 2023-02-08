@@ -1,7 +1,6 @@
 #include "appmain.h"
 #include "minilib.h"
 #include "list.h"
-#include "idt.h"
 
 // on cree le tableau qui va permettre de memoriser les contextes actifs
 struct pctx context_list[LIST_SIZE];
@@ -58,20 +57,20 @@ void f_ping2(void *args)
    {
        while(1) {
            putc('A') ;
-           //yield();
+           yield();
            putc('B') ;
-           //yield();
+           yield();
            putc('C') ;
-           //yield();
+           yield();
  } }
 
  void f_pong2(void *args)
     {
         while(1) {
             putc('1') ;
-            //yield();
+            yield();
             putc('2') ;
-            //yield();
+           yield();
  } }
 
 void app_main2()
