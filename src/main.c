@@ -2,9 +2,10 @@
 #include "idt.h"
 #include "minilib.h"
 
-//extern void app_main();
+extern void app_main();
 extern void app_main2();
 extern void app_main3();
+extern void appmain_periph();
 
 void empty_irq(int_regs_t *r) {
 }
@@ -41,7 +42,10 @@ void main(unsigned int * mboot_info)
       //yield
       //app_main2();
       //round_robbind
-      app_main3();
+       app_main3();
+      //peripheriques
+      //appmain_periph();
+
     puts("Going idle\n");
     for(;;) ; /* nothing more to do... really nothing ! */
 }
